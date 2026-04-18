@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { projects } from '../lib/projects';
 
 function Badge({ status }: { status: string }) {
@@ -32,9 +33,9 @@ export default function Home() {
                   <a className='rounded-full border border-white/10 px-3 py-1.5 transition hover:border-cyan-400/60 hover:text-cyan-200' href={project.repoUrl} target='_blank' rel='noreferrer'>
                     GitHub
                   </a>
-                  <a className='rounded-full border border-white/10 px-3 py-1.5 transition hover:border-cyan-400/60 hover:text-cyan-200' href={project.pagesUrl} target='_blank' rel='noreferrer'>
-                    GitHub Pages
-                  </a>
+                  <Link className='rounded-full border border-white/10 px-3 py-1.5 transition hover:border-cyan-400/60 hover:text-cyan-200' href={project.pagesUrl}>
+                    Open project
+                  </Link>
                 </div>
               </article>
             ))}
