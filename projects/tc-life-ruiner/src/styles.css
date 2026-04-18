@@ -1,0 +1,73 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #f4f7fb;
+  background: #0a0d14;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #111827, #090d14 70%);
+}
+
+textarea {
+  width: 100%;
+  min-height: 260px;
+  margin-top: 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: inherit;
+  padding: 1rem;
+  resize: vertical;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.1rem;
+  background: linear-gradient(135deg, #ff6a88, #ff9a44);
+  color: #0b1020;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.shell {
+  width: min(1080px, calc(100vw - 2rem));
+  margin: 0 auto;
+  padding: 3rem 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 24px;
+  padding: 1.5rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.74rem;
+  color: #ffad73;
+}
+
+.lede,
+.meta {
+  color: rgba(244,247,251,0.72);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+ol {
+  padding-left: 1.25rem;
+}
