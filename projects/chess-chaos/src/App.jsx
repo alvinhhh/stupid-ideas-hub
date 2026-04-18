@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Chess } from 'chess.js';
-import * as StockfishModule from 'stockfish';
+import Stockfish from 'stockfish';
 
 const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const pieces = {
@@ -11,14 +11,7 @@ const pieces = {
 const START_TIME = 300;
 const CHAOS_BONUS = 5;
 const BLUNDER_THRESHOLD = 180;
-const ENGINE_MOVE_TIME = 400;
-
-const stockfishFactory =
-  typeof StockfishModule.default === 'function'
-    ? StockfishModule.default
-    : typeof StockfishModule.stockfish === 'function'
-      ? StockfishModule.stockfish
-      : null;
+const ENGINE_DEPTH = 11;
 
 function squareName(fileIndex, rankIndex) {
   return files[fileIndex] + String(8 - rankIndex);
@@ -35,23 +28,11 @@ function formatClock(seconds) {
   return minutes + ':' + secs;
 }
 
-function opposite(side) {
-  return side === 'w' ? 'b' : 'w';
+function isGameOver(game) {
+  return Boolean(game.isGameOver?.() || game.isCheckmate() || game.isDraw() || game.isStalemate());
 }
 
-function sideLabel(side) {
-  return side === 'w' ? 'White' : 'Black';
-}
-
-function evaluateBoard(game) {
-  if (game.isCheckmate()) {
-    return game.turn() === 'w' ? 100000 : -100000;
-  }
-
-  if (game.isDraw() || game.isStalemate()) {
-    return 0;
-  }
-
+function materialScore(game) {
   const values = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 };
   let score = 0;
 
@@ -67,327 +48,328 @@ function evaluateBoard(game) {
     score += game.turn() === 'w' ? -25 : 25;
   }
 
+  if (game.isCheckmate()) {
+    return game.turn() === 'w' ? 100000 : -100000;
+  }
+
+  if (game.isDraw() || game.isStalemate()) {
+    return 0;
+  }
+
   return score;
 }
 
-function evaluateMoveForSide(game, move, side) {
-  const next = copyGame(game);
-  next.move(move);
-  const score = evaluateBoard(next);
-  return side === 'w' ? score : -score;
+function scoreForSide(game, side) {
+  return side === 'w' ? materialScore(game) : -materialScore(game);
 }
 
-function chooseHeuristicMove(game, side) {
-  const moves = game.moves({ verbose: true });
-  if (moves.length === 0) return null;
+function moveScoreForSide(game, move, side) {
+  const next = copyGame(game);
+  next.move(move);
+  return scoreForSide(next, side);
+}
 
-  let bestMove = moves[0];
+function chooseBestLegalMove(game, side) {
+  const legalMoves = game.moves({ verbose: true });
+  if (legalMoves.length === 0) {
+    return null;
+  }
+
+  let bestMove = legalMoves[0];
   let bestScore = -Infinity;
 
-  for (const move of moves) {
-    const score = evaluateMoveForSide(game, move, side);
+  for (const candidate of legalMoves) {
+    const score = moveScoreForSide(game, candidate, side);
     if (score > bestScore) {
       bestScore = score;
-      bestMove = move;
+      bestMove = candidate;
     }
   }
 
   return bestMove;
 }
 
-function parseUciMove(game, uci) {
-  const match = String(uci || '').trim().match(/^([a-h][1-8])([a-h][1-8])([qrbn])?$/i);
-  if (!match) return null;
-
-  const move = {
-    from: match[1],
-    to: match[2],
-  };
-
-  if (match[3]) {
-    move.promotion = match[3].toLowerCase();
-  }
-
-  const legal = game.moves({ verbose: true }).some((candidate) => {
-    return (
-      candidate.from === move.from &&
-      candidate.to === move.to &&
-      (!move.promotion || candidate.promotion === move.promotion)
-    );
-  });
-
-  return legal ? move : null;
+function parseUciMove(uci) {
+  if (!uci || uci.length < 4) return null;
+  const from = uci.slice(0, 2);
+  const to = uci.slice(2, 4);
+  const promotion = uci.length > 4 ? uci.slice(4, 5) : 'q';
+  return { from, to, promotion };
 }
 
 export default function App() {
-  const [phase, setPhase] = useState('select-side');
-  const [userSide, setUserSide] = useState(null);
+  const [sideChoice, setSideChoice] = useState('');
   const [game, setGame] = useState(() => new Chess());
   const [selected, setSelected] = useState('');
-  const [statusMessage, setStatusMessage] = useState('Choose a side to begin.');
   const [whiteClock, setWhiteClock] = useState(START_TIME);
   const [blackClock, setBlackClock] = useState(START_TIME);
-  const [lastChaos, setLastChaos] = useState('The chaos clock is waiting.');
+  const [statusMessage, setStatusMessage] = useState('Choose a side to start.');
+  const [chaosMessage, setChaosMessage] = useState('The chaos clock waits for a blunder.');
+  const [engineReady, setEngineReady] = useState(false);
   const [engineThinking, setEngineThinking] = useState(false);
 
   const engineRef = useRef(null);
-  const engineResolveRef = useRef(null);
-  const engineTimeoutRef = useRef(null);
+  const gameRef = useRef(game);
+  const pendingRequestRef = useRef(0);
+  const pendingFenRef = useRef('');
+  const fallbackTimerRef = useRef(0);
 
-  const legalTargets = useMemo(() => {
-    if (!selected || phase !== 'playing') return [];
-    return game.moves({ square: selected, verbose: true }).map((move) => move.to);
-  }, [game, phase, selected]);
+  const engineSide = sideChoice ? (sideChoice === 'w' ? 'b' : 'w') : '';
 
   const board = useMemo(() => game.board(), [game]);
+  const legalTargets = useMemo(() => {
+    if (!selected) return [];
+    return game.moves({ square: selected, verbose: true }).map((move) => move.to);
+  }, [game, selected]);
   const moveHistory = useMemo(() => game.history().slice().reverse(), [game]);
-  const engineSide = userSide ? opposite(userSide) : null;
-  const gameOver = game.isCheckmate() || game.isDraw() || game.isStalemate();
+  const chosenSideLabel = sideChoice === 'w' ? 'White' : sideChoice === 'b' ? 'Black' : '';
+  const opponentSideLabel = sideChoice === 'w' ? 'Black' : 'White';
 
   useEffect(() => {
-    if (phase !== 'playing' || gameOver) return;
+    gameRef.current = game;
+  }, [game]);
 
-    const timer = setInterval(() => {
-      if (game.turn() === 'w') {
+  useEffect(() => {
+    let active = true;
+
+    try {
+      const engine = Stockfish();
+      engineRef.current = engine;
+      engine.onmessage = (event) => {
+        if (!active) return;
+        const line = String(event?.data ?? event ?? '');
+
+        if (line.includes('uciok') || line.includes('readyok')) {
+          setEngineReady(true);
+          return;
+        }
+
+        if (!line.startsWith('bestmove')) {
+          return;
+        }
+
+        const requestId = pendingRequestRef.current;
+        const fen = pendingFenRef.current;
+        if (!requestId || !fen) return;
+        if (gameRef.current.fen() !== fen || isGameOver(gameRef.current) || gameRef.current.turn() !== engineSide) {
+          return;
+        }
+
+        const match = line.match(/^bestmoves+(S+)/);
+        const parsedMove = parseUciMove(match ? match[1] : '');
+        if (!parsedMove) return;
+
+        resolveMove(parsedMove, engineSide, 'engine');
+      };
+
+      engine.postMessage('uci');
+      engine.postMessage('setoption name Skill Level value 10');
+      engine.postMessage('isready');
+    } catch {
+      setEngineReady(false);
+    }
+
+    return () => {
+      active = false;
+      try {
+        engineRef.current?.postMessage('quit');
+      } catch {
+        // ignore cleanup errors
+      }
+    };
+  }, [engineSide]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const current = gameRef.current;
+      if (!sideChoice || isGameOver(current)) return;
+
+      if (current.turn() === 'w') {
         setWhiteClock((value) => Math.max(0, value - 1));
       } else {
         setBlackClock((value) => Math.max(0, value - 1));
       }
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [game, gameOver, phase]);
+    return () => window.clearInterval(timer);
+  }, [sideChoice]);
 
-  useEffect(() => {
-    return () => {
-      if (engineTimeoutRef.current) {
-        clearTimeout(engineTimeoutRef.current);
-        engineTimeoutRef.current = null;
-      }
-      if (engineRef.current && typeof engineRef.current.postMessage === 'function') {
-        try {
-          engineRef.current.postMessage('quit');
-        } catch {
-          // ignore
-        }
+  const clearPendingEngineWork = () => {
+    pendingRequestRef.current = 0;
+    pendingFenRef.current = '';
+    window.clearTimeout(fallbackTimerRef.current);
+    fallbackTimerRef.current = 0;
+    setEngineThinking(false);
+  };
+
+  function requestEngineMove(snapshot) {
+    if (!engineSide || isGameOver(snapshot)) return;
+
+    const requestId = pendingRequestRef.current + 1;
+    pendingRequestRef.current = requestId;
+    pendingFenRef.current = snapshot.fen();
+    setEngineThinking(true);
+    setStatusMessage('Engine thinking...');
+
+    const engine = engineRef.current;
+    const fallback = () => {
+      if (pendingRequestRef.current !== requestId) return;
+      const move = chooseBestLegalMove(snapshot, engineSide);
+      if (move) {
+        resolveMove({ from: move.from, to: move.to, promotion: move.promotion || 'q' }, engineSide, 'engine');
       }
     };
-  }, []);
 
-  useEffect(() => {
-    if (phase !== 'playing' || !engineSide || gameOver) return;
-    if (game.turn() !== engineSide) return;
+    window.clearTimeout(fallbackTimerRef.current);
+    fallbackTimerRef.current = window.setTimeout(fallback, 1400);
 
-    let cancelled = false;
-    setEngineThinking(true);
-    setStatusMessage(sideLabel(engineSide) + ' is thinking.');
-
-    const requestMove = async () => {
-      const engineMove = await getEngineMove(game, engineSide, engineRef, engineResolveRef, engineTimeoutRef);
-      if (cancelled) return;
-      const move = parseUciMove(game, engineMove) || chooseHeuristicMove(game, engineSide);
-      if (!move) {
-        setEngineThinking(false);
+    try {
+      if (!engine || !engineReady) {
+        fallback();
         return;
       }
-      commitMove(move, engineSide, 'engine');
-      setEngineThinking(false);
-    };
 
-    requestMove();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [engineSide, game, gameOver, phase]);
-
-  async function getEngineMove(currentGame, side, engineRefValue, resolveRefValue, timeoutRefValue) {
-    const fallback = chooseHeuristicMove(currentGame, side);
-
-    if (!stockfishFactory) {
-      return fallback ? encodeMove(fallback) : '';
+      engine.postMessage('position fen ' + snapshot.fen());
+      engine.postMessage('go depth ' + ENGINE_DEPTH);
+    } catch {
+      fallback();
     }
+  }
 
-    let engine = engineRefValue.current;
-    if (!engine) {
-      try {
-        engine = stockfishFactory();
-      } catch {
-        engine = null;
-      }
+  function resolveMove(move, moverSide, source) {
+    const current = gameRef.current;
+    if (isGameOver(current) || current.turn() !== moverSide) return;
 
-      if (!engine || typeof engine.postMessage !== 'function') {
-        engineRefValue.current = null;
-        return fallback ? encodeMove(fallback) : '';
-      }
+    const legalMoves = current.moves({ verbose: true });
+    if (legalMoves.length === 0) return;
 
-      engineRefValue.current = engine;
-      engine.onmessage = (event) => {
-        const data = typeof event === 'string' ? event : event?.data;
-        if (typeof data !== 'string') return;
-        if (!data.startsWith('bestmove')) return;
-
-        const parts = data.trim().split(/s+/);
-        const bestmove = parts[1] || '';
-        if (resolveRefValue.current) {
-          const resolver = resolveRefValue.current;
-          resolveRefValue.current = null;
-          resolver(bestmove);
-        }
-      };
-
-      try {
-        engine.postMessage('uci');
-        engine.postMessage('isready');
-      } catch {
-        engineRefValue.current = null;
-        return fallback ? encodeMove(fallback) : '';
+    let bestScore = -Infinity;
+    for (const candidate of legalMoves) {
+      const candidateScore = moveScoreForSide(current, candidate, moverSide);
+      if (candidateScore > bestScore) {
+        bestScore = candidateScore;
       }
     }
 
-    return await new Promise((resolve) => {
-      resolveRefValue.current = resolve;
-      if (timeoutRefValue.current) {
-        clearTimeout(timeoutRefValue.current);
-      }
-      timeoutRefValue.current = setTimeout(() => {
-        if (resolveRefValue.current) {
-          const fallbackMove = fallback ? encodeMove(fallback) : '';
-          const resolver = resolveRefValue.current;
-          resolveRefValue.current = null;
-          resolver(fallbackMove);
-        }
-      }, ENGINE_MOVE_TIME + 1200);
-
-      try {
-        engine.postMessage('ucinewgame');
-        engine.postMessage('position fen ' + currentGame.fen());
-        engine.postMessage('go movetime ' + ENGINE_MOVE_TIME);
-      } catch {
-        if (resolveRefValue.current) {
-          const fallbackMove = fallback ? encodeMove(fallback) : '';
-          const resolver = resolveRefValue.current;
-          resolveRefValue.current = null;
-          resolver(fallbackMove);
-        }
-      }
-    });
-  }
-
-  function encodeMove(move) {
-    if (!move) return '';
-    return move.from + move.to + (move.promotion || '');
-  }
-
-  function nextStatus(futureGame = game) {
-    if (futureGame.isCheckmate()) return 'Checkmate. Hit restart to play again.';
-    if (futureGame.isDraw()) return 'Draw. The board has given up.';
-    if (futureGame.isStalemate()) return 'Stalemate. No legal moves remain.';
-    if (futureGame.isCheck()) return 'Check on ' + sideLabel(futureGame.turn()).toLowerCase() + '.';
-    return sideLabel(futureGame.turn()) + ' to move.';
-  }
-
-  function resolveMoveOutcome(baseGame, move, moverSide) {
-    const next = copyGame(baseGame);
+    const beforeScore = scoreForSide(current, moverSide);
+    const next = copyGame(current);
     next.move(move);
+    const afterScore = scoreForSide(next, moverSide);
+    const blunderGap = bestScore - afterScore;
+    const isBlunder = blunderGap >= BLUNDER_THRESHOLD || beforeScore - afterScore >= 120;
 
-    const currentScore = evaluateBoard(baseGame) * (moverSide === 'w' ? 1 : -1);
-    const bestScore = baseGame
-      .moves({ verbose: true })
-      .reduce((best, candidate) => Math.max(best, evaluateMoveForSide(baseGame, candidate, moverSide)), -Infinity);
-    const moveScore = evaluateBoard(next) * (moverSide === 'w' ? 1 : -1);
-    const blunderGap = bestScore - moveScore;
-    const isBlunder = blunderGap >= BLUNDER_THRESHOLD || currentScore - moveScore >= 120;
-
-    return { next, isBlunder };
-  }
-
-  function commitMove(move, moverSide, source) {
-    const outcome = resolveMoveOutcome(game, move, moverSide);
-    setGame(outcome.next);
+    gameRef.current = next;
+    setGame(next);
     setSelected('');
+    clearPendingEngineWork();
 
-    if (outcome.isBlunder) {
+    if (isBlunder) {
       if (moverSide === 'w') {
         setBlackClock((value) => value + CHAOS_BONUS);
-        setLastChaos('Blunder spotted. Black gets +' + CHAOS_BONUS + ' seconds.');
+        setChaosMessage('Blunder. Black gets +' + CHAOS_BONUS + ' seconds.');
       } else {
         setWhiteClock((value) => value + CHAOS_BONUS);
-        setLastChaos('Blunder spotted. White gets +' + CHAOS_BONUS + ' seconds.');
+        setChaosMessage('Blunder. White gets +' + CHAOS_BONUS + ' seconds.');
       }
-      setStatusMessage((source === 'engine' ? 'Engine' : 'Dumb') + ' move triggered the chaos clock.');
+      setStatusMessage(source === 'engine' ? 'Engine blunder. Chaos penalty applied.' : 'Blunder. Chaos penalty applied.');
     } else {
-      setLastChaos('Clean move. No chaos bonus awarded.');
-      setStatusMessage(nextStatus(outcome.next));
+      setChaosMessage('No chaos penalty on that move.');
+      setStatusMessage(source === 'engine' ? 'Your move.' : 'Engine thinking...');
     }
+
+    if (isGameOver(next)) {
+      if (next.isCheckmate()) {
+        setStatusMessage('Checkmate.');
+      } else if (next.isStalemate()) {
+        setStatusMessage('Stalemate.');
+      } else if (next.isDraw()) {
+        setStatusMessage('Draw.');
+      } else {
+        setStatusMessage('Game over.');
+      }
+      return;
+    }
+
+    if (source === 'user' && next.turn() === engineSide) {
+      requestEngineMove(next);
+      return;
+    }
+
+    setStatusMessage(next.turn() === sideChoice ? 'Your move.' : 'Engine thinking...');
   }
 
-  function startSide(side) {
-    setUserSide(side);
-    setPhase('playing');
-    setGame(new Chess());
+  function startGame(side) {
+    const fresh = new Chess();
+    gameRef.current = fresh;
+    setGame(fresh);
+    setSideChoice(side);
     setSelected('');
     setWhiteClock(START_TIME);
     setBlackClock(START_TIME);
-    setStatusMessage(side === 'w' ? 'You are White. White to move.' : 'You are Black. White starts.');
-    setLastChaos('The chaos clock is waiting.');
-  }
+    setChaosMessage('The chaos clock waits for a blunder.');
+    setStatusMessage(side === 'w' ? 'You are White. Your move.' : 'You are Black. Waiting for White.');
+    clearPendingEngineWork();
 
-  function resetSideSelect() {
-    setPhase('select-side');
-    setUserSide(null);
-    setGame(new Chess());
-    setSelected('');
-    setWhiteClock(START_TIME);
-    setBlackClock(START_TIME);
-    setStatusMessage('Choose a side to begin.');
-    setLastChaos('The chaos clock is waiting.');
-    setEngineThinking(false);
+    if (side === 'b') {
+      requestEngineMove(fresh);
+    }
   }
 
   function restartGame() {
-    setGame(new Chess());
+    if (!sideChoice) {
+      startGame('w');
+      return;
+    }
+
+    startGame(sideChoice);
+  }
+
+  function changeSide() {
+    const fresh = new Chess();
+    gameRef.current = fresh;
+    setGame(fresh);
+    setSideChoice('');
     setSelected('');
     setWhiteClock(START_TIME);
     setBlackClock(START_TIME);
-    setLastChaos('The chaos clock is waiting.');
-    setStatusMessage(userSide === 'w' ? 'White to move.' : userSide === 'b' ? 'White starts.' : 'Choose a side to begin.');
-    setEngineThinking(false);
+    setChaosMessage('The chaos clock waits for a blunder.');
+    setStatusMessage('Choose a side to start.');
+    clearPendingEngineWork();
   }
 
   function handleSquareClick(square) {
-    if (phase !== 'playing' || gameOver || !userSide) return;
-    if (game.turn() !== userSide) return;
+    const current = gameRef.current;
+    if (!sideChoice || engineThinking || isGameOver(current) || current.turn() !== sideChoice) return;
 
-    const piece = game.get(square);
+    const piece = current.get(square);
 
     if (selected && legalTargets.includes(square)) {
-      const move = { from: selected, to: square, promotion: 'q' };
-      commitMove(move, userSide, 'user');
+      resolveMove({ from: selected, to: square, promotion: 'q' }, sideChoice, 'user');
       return;
     }
 
-    if (piece && piece.color === game.turn()) {
+    if (piece && piece.color === sideChoice) {
       setSelected(square);
-      setStatusMessage(sideLabel(piece.color) + ' ' + piece.type.toUpperCase() + ' selected on ' + square + '.');
+      setStatusMessage((piece.color === 'w' ? 'White' : 'Black') + ' ' + piece.type.toUpperCase() + ' selected on ' + square + '.');
       return;
     }
 
     setSelected('');
-    setStatusMessage(nextStatus());
+    setStatusMessage(sideChoice === 'w' ? 'White to move.' : 'Black to move.');
   }
 
-  if (phase === 'select-side') {
+  if (!sideChoice) {
     return (
       <main className='app-shell select-shell'>
         <section className='select-card'>
-          <p className='eyebrow'>Chess Chaos</p>
+          <p className='eyebrow'>chess chaos</p>
           <h1>Chess Chaos</h1>
-          <p className='lede'>Choose a side. Stockfish plays the other side, and the chaos clock adds 5 seconds when someone makes a bad move.</p>
+          <p className='lede'>Pick a side. The engine takes the other side. Bad moves add 5 seconds to the other clock.</p>
           <div className='side-buttons'>
-            <button onClick={() => startSide('w')}>Play White</button>
-            <button onClick={() => startSide('b')}>Play Black</button>
+            <button onClick={() => startGame('w')}>Play White</button>
+            <button onClick={() => startGame('b')}>Play Black</button>
           </div>
+          <p className='chaos-line'>Stockfish is loaded in the background. The chaos rule stays active on every move.</p>
         </section>
       </main>
     );
@@ -396,10 +378,14 @@ export default function App() {
   return (
     <main className='app-shell'>
       <header className='topbar'>
-        <h1>Chess Chaos</h1>
+        <div>
+          <p className='eyebrow'>chess chaos</p>
+          <h1>Chess Chaos</h1>
+          <p className='lede'>You are {chosenSideLabel}. The other side is {opponentSideLabel}. Blunders add 5 seconds to the other clock.</p>
+        </div>
         <div className='top-actions'>
-          <button className='secondary' onClick={resetSideSelect}>Change side</button>
-          <button onClick={restartGame}>Restart game</button>
+          <button onClick={restartGame}>Restart</button>
+          <button className='secondary' onClick={changeSide}>Change side</button>
         </div>
       </header>
 
@@ -447,30 +433,35 @@ export default function App() {
               </div>
             </div>
             <p className='status-text'>{statusMessage}</p>
-            <p className='chaos-line'>{lastChaos}</p>
+            <p className='chaos-line'>{chaosMessage}</p>
           </section>
 
           <section className='panel status-panel'>
             <p className='panel-label'>Chaos rule</p>
-            <p className='status-text'>Each move is scored against the best legal move from that side. If the move is weak enough, the other clock gets +5 seconds.</p>
+            <p className='status-text'>A bad move is judged against the best legal move by a simple material engine. If the move lags behind by enough, the other side gets +5 seconds.</p>
             <div className='mini-stats'>
               <div>
-                <span>Your side</span>
-                <strong>{userSide ? sideLabel(userSide) : 'None'}</strong>
+                <span>Turn</span>
+                <strong>{game.turn() === 'w' ? 'White' : 'Black'}</strong>
               </div>
               <div>
-                <span>Engine side</span>
-                <strong>{engineSide ? sideLabel(engineSide) : 'Waiting'}</strong>
+                <span>Legal moves</span>
+                <strong>{legalTargets.length}</strong>
               </div>
             </div>
+          </section>
+
+          <section className='panel status-panel'>
+            <p className='panel-label'>Engine</p>
+            <p className='status-text'>{engineThinking ? 'Thinking...' : engineReady ? 'Ready.' : 'Loading.'}</p>
           </section>
 
           <section className='panel instructions-panel'>
             <p className='panel-label'>How it works</p>
             <ul>
-              <li>Pick White or Black first.</li>
-              <li>Stockfish plays the other side.</li>
-              <li>Bad moves trigger the chaos clock.</li>
+              <li>Tap a piece to select it.</li>
+              <li>Target squares are marked with a border.</li>
+              <li>Blunders hand out bonus time to the other side.</li>
             </ul>
           </section>
 
