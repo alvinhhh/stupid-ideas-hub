@@ -1,0 +1,133 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #f7f9fc;
+  background: #081019;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(91, 140, 255, 0.18), transparent 28%),
+    linear-gradient(180deg, #0f172a, #081019 72%);
+}
+
+button {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1120px, calc(100vw - 2rem));
+  margin: 0 auto;
+  padding: 3rem 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.hero-card,
+.board-card,
+.move-log {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 24px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.74rem;
+  color: #8edcff;
+}
+
+.lede,
+.meta {
+  color: rgba(247, 249, 252, 0.75);
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.1rem;
+  background: linear-gradient(135deg, #8fa4ff, #5fd7ff);
+  color: #081019;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.board-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.square {
+  aspect-ratio: 1;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 2rem;
+  position: relative;
+}
+
+.square.dark {
+  background: #30415d;
+}
+
+.square.light {
+  background: #d5dbe6;
+  color: #122033;
+}
+
+.square.selected {
+  outline: 3px solid #ffd166;
+  outline-offset: -3px;
+}
+
+.square.target::after {
+  content: '';
+  position: absolute;
+  inset: 18%;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.28);
+}
+
+.square span,
+.square small {
+  position: relative;
+  z-index: 1;
+}
+
+.square small {
+  position: absolute;
+  left: 0.45rem;
+  top: 0.35rem;
+  font-size: 0.7rem;
+  opacity: 0.65;
+}
+
+.move-log ol {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
