@@ -81,3 +81,13 @@ button:hover {
   white-space: pre-wrap;
   line-height: 1.7;
 }
+
+.plain-footer {
+  padding-top: 0.4rem;
+  color: #a3a3a3;
+  font-size: 0.85rem;
+}
+
+.plain-footer a {
+  color: #ededed;
+}

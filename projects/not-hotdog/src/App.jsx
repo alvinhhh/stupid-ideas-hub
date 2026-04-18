@@ -76,6 +76,10 @@ export default function App() {
           </div>
         ))}
       </section>
+
+      <footer className='plain-footer'>
+        <a href='https://alvinhua.ng' target='_blank' rel='noreferrer'>alvinhua.ng</a>
+      </footer>
     </main>
   );
 }

@@ -90,6 +90,10 @@ export default function App() {
       <section className='card output'>
         <pre>{copyBuffer}</pre>
       </section>
+
+      <footer className='plain-footer'>
+        <a href='https://alvinhua.ng' target='_blank' rel='noreferrer'>alvinhua.ng</a>
+      </footer>
     </main>
   );
 }

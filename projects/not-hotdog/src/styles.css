@@ -119,3 +119,12 @@ button:hover {
 .prediction-row:first-child {
   border-top: 0;
 }
+
+.plain-footer {
+  color: #a3a3a3;
+  font-size: 0.85rem;
+}
+
+.plain-footer a {
+  color: #ededed;
+}

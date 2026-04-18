@@ -133,3 +133,15 @@ textarea {
 .plain-card {
   padding: 1rem;
 }
+
+.plain-footer {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.plain-footer a {
+  color: var(--text);
+}

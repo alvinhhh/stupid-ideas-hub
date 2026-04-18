@@ -309,6 +309,16 @@ button.secondary {
   overflow: auto;
 }
 
+.plain-footer {
+  margin-top: -0.4rem;
+  color: #a3a3a3;
+  font-size: 0.85rem;
+}
+
+.plain-footer a {
+  color: #ededed;
+}
+
 @media (max-width: 980px) {
   body {
     overflow: auto;

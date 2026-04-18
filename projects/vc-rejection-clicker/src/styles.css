@@ -107,3 +107,12 @@ pre {
   display: grid;
   gap: 1rem;
 }
+
+.plain-footer {
+  color: #a3a3a3;
+  font-size: 0.85rem;
+}
+
+.plain-footer a {
+  color: #ededed;
+}

@@ -32,6 +32,10 @@ export default function Home() {
           </article>
         ))}
       </section>
+
+      <footer className='plain-footer'>
+        <span>alvinhua.ng</span>
+      </footer>
     </main>
   );
 }
