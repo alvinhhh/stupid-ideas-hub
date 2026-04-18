@@ -22,7 +22,7 @@ export default function Home() {
 
           <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
             {projects.map((project) => (
-              <article key={project.title} className='group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-cyan-400/40 hover:bg-white/8'>
+              <article key={project.title} className='group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-cyan-400/40 hover:bg-white/10'>
                 <div className='flex items-center justify-between gap-3'>
                   <h2 className='text-xl font-semibold'>{project.title}</h2>
                   <Badge status={project.status} />
