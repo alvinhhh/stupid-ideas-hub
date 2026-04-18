@@ -376,6 +376,9 @@ export default function App() {
             <button onClick={() => startGame('b')}>Play Black</button>
           </div>
           <p className='chaos-line'>Stockfish is loaded in the background. The chaos rule stays active on every move.</p>
+          <footer className='plain-footer'>
+            <a href='https://alvinhua.ng' target='_blank' rel='noreferrer'>alvinhua.ng</a>
+          </footer>
         </section>
       </main>
     );
