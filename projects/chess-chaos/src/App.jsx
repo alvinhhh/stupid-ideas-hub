@@ -53,10 +53,11 @@ function evaluateBoard(game) {
   return score;
 }
 
-function evaluateMove(game, move) {
+function evaluateMoveForSide(game, move, side) {
   const next = copyGame(game);
   next.move(move);
-  return evaluateBoard(next);
+  const score = evaluateBoard(next);
+  return side === 'w' ? score : -score;
 }
 
 export default function App() {
@@ -74,7 +75,6 @@ export default function App() {
 
   const board = useMemo(() => game.board(), [game]);
   const moveHistory = useMemo(() => game.history().slice().reverse(), [game]);
-  const activeClock = game.turn() === 'w' ? whiteClock : blackClock;
 
   useEffect(() => {
     if (game.isGameOver?.() || game.isCheckmate() || game.isDraw() || game.isStalemate()) {
@@ -106,20 +106,18 @@ export default function App() {
     if (selected && legalTargets.includes(square)) {
       const mover = game.turn();
       const move = { from: selected, to: square, promotion: 'q' };
-      const preMoveScore = evaluateBoard(game);
+      const currentScore = evaluateBoard(game) * (mover === 'w' ? 1 : -1);
       const bestScore = game
         .moves({ verbose: true })
-        .reduce((best, candidate) => Math.max(best, evaluateMove(game, candidate)), -Infinity);
+        .reduce((best, candidate) => Math.max(best, evaluateMoveForSide(game, candidate, mover)), -Infinity);
       const next = copyGame(game);
       next.move(move);
-      const postMoveScore = evaluateBoard(next);
-      const blunderGap = bestScore - postMoveScore;
-      const isBlunder = blunderGap >= BLUNDER_THRESHOLD || postMoveScore < preMoveScore - 120;
+      const moveScore = evaluateBoard(next) * (mover === 'w' ? 1 : -1);
+      const blunderGap = bestScore - moveScore;
+      const isBlunder = blunderGap >= BLUNDER_THRESHOLD || currentScore - moveScore >= 120;
 
       setGame(next);
       setSelected('');
-      setWhiteClock((value) => (mover === 'w' && isBlunder ? value : value));
-      setBlackClock((value) => (mover === 'b' && isBlunder ? value : value));
       if (isBlunder) {
         if (mover === 'w') {
           setBlackClock((value) => value + CHAOS_BONUS);
