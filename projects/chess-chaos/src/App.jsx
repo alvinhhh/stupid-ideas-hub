@@ -132,7 +132,7 @@ export default function App() {
 
   useEffect(() => {
     engineSideRef.current = engineSide;
-  }, []);
+  }, [engineSide]);
 
   useEffect(() => {
     let active = true;
@@ -182,7 +182,7 @@ export default function App() {
         // ignore cleanup errors
       }
     };
-  }, [engineSide]);
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
