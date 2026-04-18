@@ -1,6 +1,6 @@
 # stupid-ideas-hub
 
-A central catalog for the drip-fed project queue.
+A central catalog for the current project set.
 
 ## Run locally
 
