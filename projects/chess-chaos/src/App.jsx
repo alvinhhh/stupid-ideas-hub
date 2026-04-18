@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Chess } from 'chess.js';
-import Stockfish from 'stockfish';
+const STOCKFISH_WORKER_PATH = 'stockfish/src/stockfish-nnue-16-single.js';
 
 const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const pieces = {
@@ -138,7 +138,7 @@ export default function App() {
     let active = true;
 
     try {
-      const engine = Stockfish();
+      const engine = new Worker(new URL(STOCKFISH_WORKER_PATH, import.meta.url));
       engineRef.current = engine;
       engine.onmessage = (event) => {
         if (!active) return;
@@ -177,7 +177,7 @@ export default function App() {
     return () => {
       active = false;
       try {
-        engineRef.current?.postMessage('quit');
+        engineRef.current?.terminate();
       } catch {
         // ignore cleanup errors
       }
