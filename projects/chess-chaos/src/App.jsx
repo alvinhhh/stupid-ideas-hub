@@ -155,7 +155,7 @@ export default function App() {
           return;
         }
 
-        const match = line.match(/^bestmoves+(S+)/);
+        const match = line.match(/^bestmove\s+(\S+)/);
         const parsedMove = parseUciMove(match ? match[1] : '');
         if (!parsedMove) return;
 
@@ -202,8 +202,9 @@ export default function App() {
     setEngineThinking(false);
   };
 
-  function requestEngineMove(snapshot) {
-    if (!engineSide || isGameOver(snapshot)) return;
+  function requestEngineMove(snapshot, forcedEngineSide) {
+    const moveSide = forcedEngineSide || engineSide;
+    if (!moveSide || isGameOver(snapshot)) return;
 
     const requestId = pendingRequestRef.current + 1;
     pendingRequestRef.current = requestId;
@@ -214,9 +215,9 @@ export default function App() {
     const engine = engineRef.current;
     const fallback = () => {
       if (pendingRequestRef.current !== requestId) return;
-      const move = chooseBestLegalMove(snapshot, engineSide);
+      const move = chooseBestLegalMove(snapshot, moveSide);
       if (move) {
-        resolveMove({ from: move.from, to: move.to, promotion: move.promotion || 'q' }, engineSide, 'engine');
+        resolveMove({ from: move.from, to: move.to, promotion: move.promotion || 'q' }, moveSide, 'engine');
       }
     };
 
@@ -291,7 +292,7 @@ export default function App() {
     }
 
     if (source === 'user' && next.turn() === engineSide) {
-      requestEngineMove(next);
+      requestEngineMove(next, engineSide);
       return;
     }
 
@@ -311,7 +312,7 @@ export default function App() {
     clearPendingEngineWork();
 
     if (side === 'b') {
-      requestEngineMove(fresh);
+      requestEngineMove(fresh, side === 'w' ? 'b' : 'w');
     }
   }
 
