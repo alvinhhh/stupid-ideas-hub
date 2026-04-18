@@ -1,64 +1,70 @@
 :root {
-  font-family: Inter, system-ui, sans-serif;
-  color: #f4f7fb;
-  background: #0a0d14;
+  color-scheme: dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #ededed;
+  background: #050505;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #111827, #090d14 70%);
+  background: #050505;
 }
 
 textarea {
   width: 100%;
   min-height: 260px;
   margin-top: 1rem;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
+  border-radius: 0;
+  border: 1px solid #262626;
+  background: #0d0d0d;
   color: inherit;
   padding: 1rem;
   resize: vertical;
 }
 
 button {
-  border: 0;
-  border-radius: 999px;
-  padding: 0.9rem 1.1rem;
-  background: linear-gradient(135deg, #ff6a88, #ff9a44);
-  color: #0b1020;
-  font-weight: 700;
+  border: 1px solid #262626;
+  border-radius: 0;
+  padding: 0.85rem 1rem;
+  background: #0d0d0d;
+  color: #ededed;
   cursor: pointer;
+}
+
+button:hover {
+  background: #151515;
 }
 
 .shell {
   width: min(1080px, calc(100vw - 2rem));
   margin: 0 auto;
-  padding: 3rem 0;
+  padding: 2rem 0 3rem;
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 24px;
-  padding: 1.5rem;
+  border: 1px solid #262626;
+  background: #0d0d0d;
+  padding: 1rem;
 }
 
 .eyebrow {
+  margin: 0 0 0.5rem;
+  color: #a3a3a3;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.74rem;
-  color: #ffad73;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
 }
 
 .lede,
 .meta {
-  color: rgba(244,247,251,0.72);
+  color: #a3a3a3;
 }
 
 .actions {
@@ -66,6 +72,7 @@ button {
   gap: 1rem;
   align-items: center;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
 
 ol {

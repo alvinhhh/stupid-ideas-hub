@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Stupid Ideas Catalog',
-  description: 'A central catalog for the active projects',
+  title: 'Stupid Ideas Hub',
+  description: 'A plain-text catalog for the active projects',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

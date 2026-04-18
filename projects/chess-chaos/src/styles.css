@@ -1,7 +1,8 @@
 :root {
-  font-family: Inter, system-ui, sans-serif;
-  color: #f7f9fc;
-  background: #081019;
+  color-scheme: dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #ededed;
+  background: #050505;
   line-height: 1.5;
 }
 
@@ -19,9 +20,7 @@ body,
 body {
   margin: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top, rgba(91, 140, 255, 0.18), transparent 28%),
-    linear-gradient(180deg, #0f172a, #081019 72%);
+  background: #050505;
 }
 
 button {
@@ -31,7 +30,7 @@ button {
 .app-shell {
   width: 100vw;
   height: 100vh;
-  padding: clamp(0.9rem, 1.6vw, 1.4rem);
+  padding: 1rem;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 1rem;
@@ -43,18 +42,15 @@ button {
 
 .select-card {
   width: min(720px, calc(100vw - 2rem));
-  border-radius: 28px;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(10px);
-  text-align: left;
+  border: 1px solid #262626;
+  background: #0d0d0d;
+  padding: 1.25rem;
 }
 
 .select-card h1 {
   margin: 0.35rem 0 0;
-  font-size: clamp(2.2rem, 4vw, 4rem);
-  line-height: 1;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
 }
 
 .topbar {
@@ -66,8 +62,8 @@ button {
 
 .topbar h1 {
   margin: 0;
-  font-size: clamp(1.8rem, 2.4vw, 3rem);
-  line-height: 1.05;
+  font-size: clamp(1.5rem, 2vw, 2.4rem);
+  line-height: 1.1;
 }
 
 .top-actions {
@@ -79,46 +75,47 @@ button {
 
 .eyebrow {
   margin: 0;
+  color: #a3a3a3;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.74rem;
-  color: #8edcff;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
 }
 
 .lede,
 .muted,
 .status-text,
 .chaos-line {
-  color: rgba(247, 249, 252, 0.75);
+  color: #a3a3a3;
 }
 
 button {
-  border: 0;
-  border-radius: 999px;
-  padding: 0.9rem 1.15rem;
-  background: linear-gradient(135deg, #8fa4ff, #5fd7ff);
-  color: #081019;
-  font-weight: 700;
+  border: 1px solid #262626;
+  border-radius: 0;
+  padding: 0.85rem 1rem;
+  background: #0d0d0d;
+  color: #ededed;
   cursor: pointer;
 }
 
+button:hover {
+  background: #151515;
+}
+
 button.secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f7f9fc;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111111;
 }
 
 .side-buttons {
   display: flex;
   gap: 0.85rem;
   flex-wrap: wrap;
-  margin-top: 1.25rem;
+  margin-top: 1rem;
 }
 
 .content-grid {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.7fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.72fr);
   gap: 1rem;
 }
 
@@ -134,14 +131,12 @@ button.secondary {
 }
 
 .board-frame {
-  width: min(100%, calc(100vh - 11rem));
+  width: min(100%, calc(100vh - 10rem));
   aspect-ratio: 1;
   min-width: 0;
-  border-radius: 24px;
+  border: 1px solid #262626;
+  background: #0d0d0d;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
 }
 
 .board {
@@ -150,8 +145,7 @@ button.secondary {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #262626;
 }
 
 .square {
@@ -159,31 +153,30 @@ button.secondary {
   border-radius: 0;
   background: transparent;
   color: inherit;
-  font-size: clamp(2.3rem, 4.1vmin, 4.1rem);
+  font-size: clamp(2rem, 4vmin, 3.6rem);
   position: relative;
   padding: 0;
 }
 
 .square.dark {
-  background: #30415d;
+  background: #191919;
 }
 
 .square.light {
-  background: #d5dbe6;
-  color: #122033;
+  background: #e5e5e5;
+  color: #050505;
 }
 
 .square.selected {
-  outline: 3px solid #ffd166;
-  outline-offset: -3px;
+  outline: 2px solid #ededed;
+  outline-offset: -2px;
 }
 
 .square.target::after {
   content: '';
   position: absolute;
-  inset: 18%;
-  border-radius: 999px;
-  background: rgba(34, 197, 94, 0.28);
+  inset: 20%;
+  border: 1px solid #262626;
 }
 
 .square span,
@@ -194,15 +187,15 @@ button.secondary {
 
 .square span {
   display: block;
-  transform: translateY(0.08em);
+  transform: translateY(0.05em);
 }
 
 .square small {
   position: absolute;
-  left: 0.45rem;
-  top: 0.35rem;
+  left: 0.35rem;
+  top: 0.3rem;
   font-size: 0.7rem;
-  opacity: 0.65;
+  opacity: 0.7;
 }
 
 .sidebar {
@@ -216,34 +209,30 @@ button.secondary {
 
 .panel {
   min-height: 0;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 24px;
-  padding: 1.25rem;
-  backdrop-filter: blur(10px);
+  border: 1px solid #262626;
+  background: #0d0d0d;
+  padding: 1rem;
 }
 
 .panel-label {
   margin: 0 0 0.5rem;
+  color: #a3a3a3;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.72rem;
-  color: #8edcff;
+  letter-spacing: 0.14em;
+  font-size: 0.7rem;
 }
 
 .status-panel {
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .status-text {
   margin: 0;
-  font-size: 1rem;
 }
 
 .chaos-line {
-  margin: -0.25rem 0 0;
-  font-weight: 600;
+  margin: -0.15rem 0 0;
 }
 
 .clock-grid {
@@ -253,27 +242,27 @@ button.secondary {
 }
 
 .clock {
-  padding: 0.95rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.85rem;
+  border: 1px solid #262626;
+  background: #111111;
 }
 
 .clock.active {
-  border-color: rgba(95, 215, 255, 0.65);
-  box-shadow: inset 0 0 0 1px rgba(95, 215, 255, 0.3);
+  background: #151515;
 }
 
 .clock span {
   display: block;
-  font-size: 0.8rem;
-  color: rgba(247, 249, 252, 0.65);
+  color: #a3a3a3;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
 }
 
 .clock strong {
   display: block;
   margin-top: 0.25rem;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
 }
 
 .mini-stats {
@@ -283,27 +272,29 @@ button.secondary {
 }
 
 .mini-stats div {
-  padding: 0.9rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
+  padding: 0.85rem;
+  border: 1px solid #262626;
+  background: #111111;
 }
 
 .mini-stats span {
   display: block;
-  font-size: 0.8rem;
-  color: rgba(247, 249, 252, 0.65);
+  color: #a3a3a3;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
 }
 
 .mini-stats strong {
   display: block;
   margin-top: 0.25rem;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .instructions-panel ul {
   margin: 0.25rem 0 0;
-  padding-left: 1.2rem;
-  color: rgba(247, 249, 252, 0.78);
+  padding-left: 1.1rem;
+  color: #a3a3a3;
 }
 
 .move-log {
@@ -314,7 +305,7 @@ button.secondary {
 
 .move-log ol {
   margin: 0.25rem 0 0;
-  padding-left: 1.2rem;
+  padding-left: 1.1rem;
   overflow: auto;
 }
 

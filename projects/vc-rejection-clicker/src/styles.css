@@ -1,9 +1,8 @@
 :root {
-  font-family: Inter, system-ui, sans-serif;
-  color: #f6f7fb;
-  background: #0b1020;
-  line-height: 1.5;
-  font-weight: 400;
+  color-scheme: dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #ededed;
+  background: #050505;
 }
 
 * {
@@ -14,25 +13,25 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top, rgba(90, 100, 255, 0.25), transparent 32%),
-    linear-gradient(180deg, #10162b, #080b15 72%);
+  background: #050505;
 }
 
 button {
-  border: 0;
-  border-radius: 999px;
-  padding: 0.9rem 1.2rem;
+  border: 1px solid #262626;
+  border-radius: 0;
+  padding: 0.85rem 1rem;
   font: inherit;
-  font-weight: 700;
+  color: #ededed;
+  background: #0d0d0d;
   cursor: pointer;
-  color: #0b1020;
-  background: linear-gradient(135deg, #8fa4ff, #5fd7ff);
+}
+
+button:hover {
+  background: #151515;
 }
 
 button.secondary {
-  color: #f6f7fb;
-  background: rgba(255, 255, 255, 0.08);
+  background: #111111;
 }
 
 pre {
@@ -44,59 +43,58 @@ pre {
 .app-shell {
   width: min(1080px, calc(100vw - 2rem));
   margin: 0 auto;
-  padding: 3rem 0;
+  padding: 2rem 0 3rem;
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .hero-card,
 .email-card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 1.5rem;
-  backdrop-filter: blur(12px);
+  border: 1px solid #262626;
+  background: #0d0d0d;
+  padding: 1rem;
 }
 
 .eyebrow {
+  margin: 0 0 0.5rem;
+  color: #a3a3a3;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.74rem;
-  color: #96d7ff;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
 }
 
 .lede,
 .email-header span {
-  color: rgba(246, 247, 251, 0.72);
+  color: #a3a3a3;
 }
 
 .stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
-  margin: 1.25rem 0;
+  margin: 1rem 0;
 }
 
 .stats div,
 .email-header {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 18px;
+  background: #111111;
+  border: 1px solid #262626;
   padding: 1rem;
 }
 
 .stats span,
 .email-header span {
   display: block;
-  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  font-size: 0.72rem;
 }
 
 .stats strong,
 .email-header strong {
   display: block;
   margin-top: 0.25rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .actions {
