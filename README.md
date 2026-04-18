@@ -1,6 +1,6 @@
 # stupid-ideas-hub
 
-A clean Next.js and Tailwind hub for the drip-fed project catalog.
+A central catalog for the drip-fed project queue.
 
 ## Run locally
 
@@ -10,3 +10,5 @@ A clean Next.js and Tailwind hub for the drip-fed project catalog.
 ## Add a project
 
 Edit lib/projects.ts and add a new entry with title, description, repository, and pages links.
+
+The GitHub Actions workflow publishes the static export to GitHub Pages.
