@@ -1,3 +1,4 @@
+import { existsSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -9,7 +10,17 @@ const projects = [
   ['vc-rejection-clicker', 'vite.config.mjs'],
 ];
 
+const outputRoot = resolve('public/projects');
+mkdirSync(outputRoot, { recursive: true });
+
 for (const [name, config] of projects) {
   console.log('Building ' + name + '...');
   execFileSync('npx', ['vite', 'build', '--config', resolve('projects', name, config)], { stdio: 'inherit' });
+
+  const outputIndex = resolve(outputRoot, name, 'index.html');
+  if (!existsSync(outputIndex)) {
+    throw new Error('Missing build output for ' + name + ': ' + outputIndex);
+  }
+
+  console.log('Verified ' + outputIndex);
 }

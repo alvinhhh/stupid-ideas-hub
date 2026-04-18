@@ -26,11 +26,12 @@ export default function App() {
   }, [game, selected]);
 
   const board = useMemo(() => game.board(), [game]);
+  const moveHistory = useMemo(() => game.history().slice().reverse(), [game]);
 
   const nextStatus = () => {
-    if (game.isCheckmate()) return "Checkmate. Hit restart to play again.";
-    if (game.isDraw()) return "Draw. The board has given up.";
-    if (game.isStalemate()) return "Stalemate. No legal moves remain.";
+    if (game.isCheckmate()) return 'Checkmate. Hit restart to play again.';
+    if (game.isDraw()) return 'Draw. The board has given up.';
+    if (game.isStalemate()) return 'Stalemate. No legal moves remain.';
     if (game.isCheck()) return 'Check on ' + (game.turn() === 'w' ? 'white' : 'black') + '.';
     return (game.turn() === 'w' ? 'White' : 'Black') + ' to move.';
   };
@@ -65,49 +66,83 @@ export default function App() {
 
   return (
     <main className='app-shell'>
-      <section className='hero-card'>
-        <p className='eyebrow'>chess chaos</p>
-        <h1>Play legal chess, then keep the chaos moving.</h1>
-        <p className='lede'>A compact chess board with move selection, legal move highlighting, and a clean restart loop.</p>
-        <div className='actions'>
-          <button onClick={restart}>Restart game</button>
-          <span className='meta'>{statusMessage}</span>
+      <header className='topbar'>
+        <div>
+          <p className='eyebrow'>chess chaos</p>
+          <h1>Big board, light controls, no page scroll.</h1>
+          <p className='lede'>A wide two-column layout with the board on the left and the controls on the right.</p>
         </div>
-      </section>
+        <button onClick={restart}>Restart game</button>
+      </header>
 
-      <section className='board-card'>
-        <div className='board'>
-          {board.map((rank, rankIndex) =>
-            rank.map((cell, fileIndex) => {
-              const square = squareName(fileIndex, rankIndex);
-              const piece = cell;
-              const isDark = (rankIndex + fileIndex) % 2 === 1;
-              const isSelected = selected === square;
-              const isTarget = legalTargets.includes(square);
-              const label = piece ? (piece.color === 'w' ? 'white' : 'black') + ' ' + piece.type + ' on ' + square : 'empty ' + square;
+      <section className='content-grid'>
+        <div className='board-panel'>
+          <div className='board-frame'>
+            <div className='board' aria-label='Chess board'>
+              {board.map((rank, rankIndex) =>
+                rank.map((cell, fileIndex) => {
+                  const square = squareName(fileIndex, rankIndex);
+                  const piece = cell;
+                  const isDark = (rankIndex + fileIndex) % 2 === 1;
+                  const isSelected = selected === square;
+                  const isTarget = legalTargets.includes(square);
+                  const label = piece ? (piece.color === 'w' ? 'white' : 'black') + ' ' + piece.type + ' on ' + square : 'empty ' + square;
 
-              return (
-                <button
-                  key={square}
-                  className={`square ${isDark ? 'dark' : 'light'} ${isSelected ? 'selected' : ''} ${isTarget ? 'target' : ''}`}
-                  onClick={() => handleSquareClick(square)}
-                  aria-label={label}
-                >
-                  <span>{piece ? pieces[piece.color][piece.type] : ""}</span>
-                  <small>{fileIndex === 0 ? 8 - rankIndex : ''}</small>
-                </button>
-              );
-            }),
-          )}
+                  return (
+                    <button
+                      key={square}
+                      className={'square ' + (isDark ? 'dark' : 'light') + ' ' + (isSelected ? 'selected' : '') + ' ' + (isTarget ? 'target' : '')}
+                      onClick={() => handleSquareClick(square)}
+                      aria-label={label}
+                    >
+                      <span>{piece ? pieces[piece.color][piece.type] : ''}</span>
+                      <small>{fileIndex === 0 ? 8 - rankIndex : ''}</small>
+                    </button>
+                  );
+                }),
+              )}
+            </div>
+          </div>
         </div>
-        <div className='move-log'>
-          <h2>Move history</h2>
-          <ol>
-            {game.history().slice().reverse().map((move) => (
-              <li key={move}>{move}</li>
-            ))}
-          </ol>
-        </div>
+
+        <aside className='sidebar'>
+          <section className='panel status-panel'>
+            <p className='panel-label'>Status</p>
+            <p className='status-text'>{statusMessage}</p>
+            <div className='mini-stats'>
+              <div>
+                <span>Turn</span>
+                <strong>{game.turn() === 'w' ? 'White' : 'Black'}</strong>
+              </div>
+              <div>
+                <span>Legal moves</span>
+                <strong>{legalTargets.length}</strong>
+              </div>
+            </div>
+          </section>
+
+          <section className='panel instructions-panel'>
+            <p className='panel-label'>How it works</p>
+            <ul>
+              <li>Tap a piece to select it.</li>
+              <li>Target squares light up in green.</li>
+              <li>The board stays centered and scaled to the viewport.</li>
+            </ul>
+          </section>
+
+          <section className='panel move-log'>
+            <p className='panel-label'>Move history</p>
+            {moveHistory.length === 0 ? (
+              <p className='muted'>No moves yet.</p>
+            ) : (
+              <ol>
+                {moveHistory.map((move) => (
+                  <li key={move}>{move}</li>
+                ))}
+              </ol>
+            )}
+          </section>
+        </aside>
       </section>
     </main>
   );
