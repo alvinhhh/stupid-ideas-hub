@@ -13,10 +13,10 @@ export default function Home() {
           <div className='max-w-3xl'>
             <p className='text-xs uppercase tracking-[0.35em] text-cyan-300'>stupid ideas hub</p>
             <h1 className='mt-4 text-4xl font-semibold tracking-tight sm:text-5xl'>
-              A clean catalog for the drip-fed project queue.
+              Stupid Ideas Catalog
             </h1>
             <p className='mt-4 max-w-2xl text-base leading-7 text-slate-300'>
-              Central homepage for the growing collection of small, intentionally weird projects. Each card links to the source repo and the hosted page.
+              Central homepage for the active projects. Each card links to the source repo and the hosted page.
             </p>
           </div>
 

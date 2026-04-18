@@ -1,6 +1,6 @@
-# stupid-ideas-hub
+# Stupid Ideas Catalog
 
-A central catalog for the current project set.
+A central catalog for the active projects.
 
 ## Run locally
 

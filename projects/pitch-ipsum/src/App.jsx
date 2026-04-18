@@ -9,7 +9,7 @@ const openers = [
 ];
 
 const modifiers = [
-  'AI-native',
+  'startup-friendly',
   'hyper-scalable',
   'verticalized',
   'distribution-first',
