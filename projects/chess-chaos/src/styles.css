@@ -37,21 +37,44 @@ button {
   gap: 1rem;
 }
 
+.select-shell {
+  place-items: center;
+}
+
+.select-card {
+  width: min(720px, calc(100vw - 2rem));
+  border-radius: 28px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(10px);
+  text-align: left;
+}
+
+.select-card h1 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  line-height: 1;
+}
+
 .topbar {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 
 .topbar h1 {
-  margin: 0.2rem 0 0;
+  margin: 0;
   font-size: clamp(1.8rem, 2.4vw, 3rem);
   line-height: 1.05;
 }
 
-.topbar .lede {
-  max-width: 54rem;
+.top-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .eyebrow {
@@ -77,6 +100,19 @@ button {
   color: #081019;
   font-weight: 700;
   cursor: pointer;
+}
+
+button.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f7f9fc;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.side-buttons {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
 }
 
 .content-grid {
@@ -173,6 +209,9 @@ button {
   display: grid;
   grid-template-rows: auto auto auto minmax(0, 1fr);
   gap: 1rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  overscroll-behavior: contain;
 }
 
 .panel {
