@@ -113,6 +113,7 @@ export default function App() {
   const pendingRequestRef = useRef(0);
   const pendingFenRef = useRef('');
   const fallbackTimerRef = useRef(0);
+  const engineSideRef = useRef('');
 
   const engineSide = sideChoice ? (sideChoice === 'w' ? 'b' : 'w') : '';
 
@@ -128,6 +129,10 @@ export default function App() {
   useEffect(() => {
     gameRef.current = game;
   }, [game]);
+
+  useEffect(() => {
+    engineSideRef.current = engineSide;
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -151,7 +156,7 @@ export default function App() {
         const requestId = pendingRequestRef.current;
         const fen = pendingFenRef.current;
         if (!requestId || !fen) return;
-        if (gameRef.current.fen() !== fen || isGameOver(gameRef.current) || gameRef.current.turn() !== engineSide) {
+        if (gameRef.current.fen() !== fen || isGameOver(gameRef.current) || gameRef.current.turn() !== engineSideRef.current) {
           return;
         }
 
@@ -159,7 +164,7 @@ export default function App() {
         const parsedMove = parseUciMove(match ? match[1] : '');
         if (!parsedMove) return;
 
-        resolveMove(parsedMove, engineSide, 'engine');
+        resolveMove(parsedMove, engineSideRef.current, 'engine');
       };
 
       engine.postMessage('uci');
