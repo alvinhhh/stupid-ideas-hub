@@ -15,6 +15,13 @@ export const projects: Project[] = [
     status: 'active',
   },
   {
+    title: 'typo-speed-typing',
+    description: 'A plain typing room. Keep it clean and keep it moving.',
+    repoUrl: 'https://github.com/alvinhhh/typo-speed-typing',
+    pagesUrl: 'projects/typo-speed-typing/',
+    status: 'active',
+  },
+  {
     title: 'pitch-ipsum',
     description: 'Lorem Ipsum, but it sounds like a startup deck.',
     repoUrl: 'https://github.com/alvinhhh/pitch-ipsum',
