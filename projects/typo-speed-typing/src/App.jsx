@@ -19,7 +19,7 @@ export default function App() {
 
   const stats = useMemo(() => {
     const chars = text.length;
-    const words = text.trim() ? text.trim().split(/s+/).length : 0;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
     return { chars, words };
   }, [text]);
 
