@@ -5,6 +5,7 @@ const prompts = [
   'small hands, quick keys',
   'the fastest word wins',
   'keep the words small and the hands moving',
+  'focus on the flow',
 ];
 
 export default function App() {
@@ -34,7 +35,7 @@ export default function App() {
       <section className='card'>
         <p className='eyebrow'>typo speed typing</p>
         <h1>Typo Speed Typing</h1>
-        <p className='lede'>A plain typing room. One prompt, one input, one clean finish, no clutter.</p>
+        <p className='lede'>A simple typing room. One prompt, one input, one clean finish, no clutter.</p>
 
         <div className='prompt-box'>
           <span>Prompt</span>
