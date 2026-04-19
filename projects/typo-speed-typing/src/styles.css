@@ -29,7 +29,7 @@ input {
   width: min(720px, 100%);
   background: #fff;
   border: 1px solid #111;
-  padding: 24px;
+  padding: 28px;
   display: grid;
   gap: 16px;
 }
