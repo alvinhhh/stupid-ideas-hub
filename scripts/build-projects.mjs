@@ -8,6 +8,7 @@ const projects = [
   ['not-hotdog', 'vite.config.mjs'],
   ['tc-life-ruiner', 'vite.config.mjs'],
   ['vc-rejection-clicker', 'vite.config.mjs'],
+  ['typo-speed-typing', 'vite.config.mjs'],
 ];
 
 const outputRoot = resolve('public/projects');
