@@ -1,12 +1,22 @@
 :root {
-  color: #111;
-  background: #f4efe6;
+  color: #141414;
+  background: #f2efe8;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
-body { margin: 0; min-height: 100vh; }
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
 
 .shell {
   min-height: 100vh;
@@ -18,7 +28,7 @@ body { margin: 0; min-height: 100vh; }
 .card {
   width: min(720px, 100%);
   background: #fff;
-  border: 1px solid #111;
+  border: 1px solid #141414;
   padding: 28px;
   display: grid;
   gap: 16px;
@@ -38,13 +48,29 @@ p {
 }
 
 .lede {
-  line-height: 1.5;
   max-width: 56ch;
+  line-height: 1.5;
 }
 
 .panel {
-  border: 1px solid #111;
+  border: 1px solid #141414;
   padding: 16px;
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.panel div {
+  display: grid;
+  gap: 4px;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px;
+  }
+
+  .panel {
+    grid-template-columns: 1fr;
+  }
 }
