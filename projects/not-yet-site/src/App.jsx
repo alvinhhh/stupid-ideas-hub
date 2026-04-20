@@ -4,7 +4,7 @@ export default function App() {
       <section className='card'>
         <p className='eyebrow'>not yet site</p>
         <h1>Not Yet Site</h1>
-        <p className='lede'>A small scaffold for the next idea. Keep it simple, keep it shippable.</p>
+        <p className='lede'>A clean scaffold for the next stupid idea. Less friction, more shipping.</p>
 
         <div className='panel'>
           <div>
@@ -17,7 +17,7 @@ export default function App() {
           </div>
           <div>
             <span>Next step</span>
-            <strong>build the first pass</strong>
+            <strong>define the core loop</strong>
           </div>
         </div>
       </section>
