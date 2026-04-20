@@ -8,6 +8,13 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    title: 'not-yet-site',
+    description: 'A placeholder scaffold waiting for the real thing.',
+    repoUrl: 'https://github.com/alvinhhh/not-yet-site',
+    pagesUrl: 'projects/not-yet-site/',
+    status: 'active',
+  },
+  {
     title: 'chess-chaos',
     description: 'Chess with a chaos clock. Blunders add 5 seconds to your time.',
     repoUrl: 'https://github.com/alvinhhh/chess-chaos',

@@ -1,0 +1,50 @@
+:root {
+  color: #111;
+  background: #f4efe6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-height: 100vh; }
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: min(720px, 100%);
+  background: #fff;
+  border: 1px solid #111;
+  padding: 28px;
+  display: grid;
+  gap: 16px;
+}
+
+.eyebrow,
+span {
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  font-size: 12px;
+}
+
+h1,
+strong,
+p {
+  margin: 0;
+}
+
+.lede {
+  line-height: 1.5;
+  max-width: 56ch;
+}
+
+.panel {
+  border: 1px solid #111;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+}
