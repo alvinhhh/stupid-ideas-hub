@@ -17,7 +17,7 @@ export default function App() {
           </div>
           <div>
             <span>Next step</span>
-            <strong>define the core loop</strong>
+            <strong>ship it fast</strong>
           </div>
         </div>
       </section>
