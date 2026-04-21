@@ -9,7 +9,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     title: 'not-yet-site',
-    description: 'A clean scaffold for the next stupid idea.',
+    description: 'A clean scaffold for the next stupid idea. Less friction, more shipping.',
     repoUrl: 'https://github.com/alvinhhh/not-yet-site',
     pagesUrl: 'projects/not-yet-site/',
     status: 'active',
