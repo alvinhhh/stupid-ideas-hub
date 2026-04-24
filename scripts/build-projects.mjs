@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
 const projects = [
+  ['text-back-8ball', 'vite.config.mjs'],
   ['chess-chaos', 'vite.config.mjs'],
   ['pitch-ipsum', 'vite.config.mjs'],
   ['not-hotdog', 'vite.config.mjs'],

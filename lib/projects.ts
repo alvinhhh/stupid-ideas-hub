@@ -8,6 +8,13 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    title: 'text-back-8ball',
+    description: 'A pocket-sized text-back toy for turning questions into answers.',
+    repoUrl: 'https://github.com/alvinhhh/stupid-ideas-hub/tree/main/projects/text-back-8ball',
+    pagesUrl: 'projects/text-back-8ball/',
+    status: 'active',
+  },
+  {
     title: 'not-yet-site',
     description: 'Minimalist scaffold for rapid shipping of new stupid ideas.',
     repoUrl: 'https://github.com/alvinhhh/not-yet-site',
