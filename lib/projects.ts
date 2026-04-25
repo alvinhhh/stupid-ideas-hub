@@ -8,6 +8,13 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    title: 'Excuse Generator',
+    description: 'Fast excuses for when the timing is off.',
+    repoUrl: 'https://github.com/alvinhhh/stupid-ideas-hub/tree/main/projects/excuse-generator',
+    pagesUrl: 'projects/excuse-generator/',
+    status: 'active',
+  },
+  {
     title: 'text-back-8ball',
     description: 'A pocket-sized text-back toy for turning questions into answers.',
     repoUrl: 'https://github.com/alvinhhh/stupid-ideas-hub/tree/main/projects/text-back-8ball',
