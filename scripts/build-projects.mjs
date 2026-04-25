@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
 const projects = [
+  ['Wiki Faker', 'vite.config.mjs'],
   ['Excuse Generator', 'vite.config.mjs'],
   ['text-back-8ball', 'vite.config.mjs'],
   ['not-yet-site', 'vite.config.mjs'],

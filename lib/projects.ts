@@ -8,6 +8,13 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    title: 'Wiki Faker',
+    description: 'A fake wiki page builder for mockups and dry runs.',
+    repoUrl: 'https://github.com/alvinhhh/stupid-ideas-hub/tree/main/projects/wiki-faker',
+    pagesUrl: 'projects/wiki-faker/',
+    status: 'active',
+  },
+  {
     title: 'Excuse Generator',
     description: 'Fast excuses for when the timing is off.',
     repoUrl: 'https://github.com/alvinhhh/stupid-ideas-hub/tree/main/projects/excuse-generator',
