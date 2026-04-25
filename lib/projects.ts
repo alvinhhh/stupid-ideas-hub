@@ -8,6 +8,13 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    title: 'Meeting Cost Burner',
+    description: 'Shows what each meeting really costs in minutes and money.',
+    repoUrl: 'https://github.com/alvinhhh/stupid-ideas-hub/tree/main/projects/meeting-cost-burner',
+    pagesUrl: 'projects/meeting-cost-burner/',
+    status: 'active',
+  },
+  {
     title: 'Wiki Faker',
     description: 'A fake wiki page builder for mockups and dry runs.',
     repoUrl: 'https://github.com/alvinhhh/stupid-ideas-hub/tree/main/projects/wiki-faker',

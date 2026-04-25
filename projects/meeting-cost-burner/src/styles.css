@@ -1,0 +1,98 @@
+:root {
+  color: #ffb6a6;
+  background: #1d1211;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: min(720px, 100%);
+  background: #2a1917;
+  border: 1px solid #ffb6a6;
+  padding: 28px;
+  display: grid;
+  gap: 16px;
+}
+
+.eyebrow,
+span {
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  font-size: 12px;
+}
+
+h1,
+strong,
+p {
+  margin: 0;
+}
+
+.lede {
+  max-width: 56ch;
+  line-height: 1.5;
+  color: #ffb6a6;
+  opacity: 0.9;
+}
+
+.panel {
+  border: 1px solid #ffb6a6;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.panel div,
+.status {
+  display: grid;
+  gap: 4px;
+}
+
+.status {
+  border: 1px solid #ffb6a6;
+  padding: 16px;
+}
+
+button {
+  justify-self: start;
+  border: 1px solid #ffb6a6;
+  background: #ffb6a6;
+  color: #1d1211;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: transparent;
+  color: #ffb6a6;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px;
+  }
+
+  .panel {
+    grid-template-columns: 1fr;
+  }
+}
