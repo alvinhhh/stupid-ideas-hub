@@ -3,9 +3,9 @@ import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
 const projects = [
-  ['Meeting Cost Burner', 'vite.config.mjs'],
-  ['Wiki Faker', 'vite.config.mjs'],
-  ['Excuse Generator', 'vite.config.mjs'],
+  ['meeting-cost-burner', 'vite.config.mjs'],
+  ['wiki-faker', 'vite.config.mjs'],
+  ['excuse-generator', 'vite.config.mjs'],
   ['text-back-8ball', 'vite.config.mjs'],
   ['not-yet-site', 'vite.config.mjs'],
   ['chess-chaos', 'vite.config.mjs'],
